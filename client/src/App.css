@@ -1,0 +1,6 @@
+/* Cleared default styles to use index.css layout */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
