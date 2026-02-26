@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import RegistrationForm from './components/RegistrationForm';
 import SuccessPage from './components/SuccessPage';
 import LandingPage from './components/LandingPage';
@@ -10,8 +11,17 @@ import AdminDashboard from './components/dashboards/AdminDashboard';
 import GrievanceForm from './components/GrievanceForm';
 import ManagerGrievanceView from './components/ManagerGrievanceView';
 import WorkerGrievanceView from './components/WorkerGrievanceView';
+import WorkerDirectory from './components/WorkerDirectory';
+import ManagerVerificationView from './components/dashboards/ManagerVerificationView';
+import AdvancedAdminDashboard from './components/dashboards/AdvancedAdminDashboard';
+import ManagerRegistrationForm from './components/dashboards/ManagerRegistrationForm';
+import AdminManagerDirectory from './components/dashboards/AdminManagerDirectory';
+import PerformanceReportsView from './components/dashboards/PerformanceReportsView';
+import ReportSubmission from './components/dashboards/ReportSubmission';
+import SOSSection from './components/SOSSection';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
 import { FiShield } from 'react-icons/fi';
@@ -96,15 +106,23 @@ function AppLayout() {
           <Route element={<ProtectedRoute allowedRoles={['worker']} />}>
             <Route path="/dashboard/worker" element={<WorkerDashboard />} />
             <Route path="/worker/grievances" element={<WorkerGrievanceView />} />
+            <Route path="/sos" element={<SOSSection />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
             <Route path="/dashboard/manager" element={<ManagerDashboard />} />
             <Route path="/manager/grievances" element={<ManagerGrievanceView />} />
+            <Route path="/manager/workers" element={<WorkerDirectory />} />
+            <Route path="/manager/verifications" element={<ManagerVerificationView />} />
+            <Route path="/manager/submit-report" element={<ReportSubmission />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/dashboard/admin" element={<AdminDashboard />} />
+            <Route path="/admin/analytics" element={<AdvancedAdminDashboard />} />
+            <Route path="/admin/register-manager" element={<ManagerRegistrationForm />} />
+            <Route path="/admin/managers" element={<AdminManagerDirectory />} />
+            <Route path="/admin/reports" element={<PerformanceReportsView />} />
           </Route>
 
           {/* Fallback */}
@@ -123,6 +141,8 @@ function AppLayout() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
+      <Toaster position="top-right" reverseOrder={false} />
       <AppLayout />
     </Router>
   );

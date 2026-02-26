@@ -43,10 +43,36 @@ const workerSchema = new mongoose.Schema({
   },
   migrantId: {
     type: String,
-    unique: true,
-    sparse: true
+    index: {
+      unique: true,
+      partialFilterExpression: { migrantId: { $type: "string" } }
+    }
   },
-
+  employmentHistory: [{
+    companyName: String,
+    supervisorNumber: String,
+    role: String,
+    startDate: { type: Date, default: Date.now },
+    endDate: Date,
+    duration: String, // Calculated string like "2 months 5 days"
+    status: {
+      type: String,
+      enum: ['pending', 'verified', 'rejected'],
+      default: 'pending'
+    },
+    verifiedAt: Date,
+    verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Worker' }
+  }],
+  currentEmployment: {
+    companyName: String,
+    supervisorNumber: String,
+    role: String,
+    status: {
+      type: String,
+      enum: ['none', 'pending', 'active'],
+      default: 'none'
+    }
+  }
 }, {
   timestamps: true
 });

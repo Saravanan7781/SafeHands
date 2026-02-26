@@ -55,6 +55,20 @@ const loginUser = async (req, res) => {
     }
 };
 
+const getMe = async (req, res) => {
+    try {
+        const worker = await Worker.findById(req.user._id).select('-password');
+        if (!worker) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(worker);
+    } catch (error) {
+        console.error('getMe Error:', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 module.exports = {
-    loginUser
+    loginUser,
+    getMe
 };

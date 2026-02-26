@@ -33,7 +33,7 @@ const getGrievancesForManager = async (req, res) => {
         // Find grievances where the district matches the manager's currentDistrict
         const grievances = await Grievance.find({ district: req.user.currentDistrict })
             .populate('worker', 'fullName phoneNumber')
-            .sort('-createdAt');
+            .sort('-updatedAt');
 
         res.json(grievances);
     } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiCheckCircle, FiStar, FiAlertTriangle, FiEdit3, FiUser, FiBook, FiMapPin, FiBell, FiClock } from 'react-icons/fi';
+import { FiCheckCircle, FiStar, FiAlertTriangle, FiEdit3, FiUser, FiBook, FiMapPin, FiBell, FiClock, FiAlertOctagon } from 'react-icons/fi';
 import api from '../../api';
 import '../../dashboard.css';
 
@@ -54,6 +54,7 @@ const WorkerDashboard = () => {
         { title: 'File Grievance', desc: 'Report an issue or complaint', icon: <FiEdit3 />, path: '/file-grievance' },
         { title: 'My ID Card', desc: 'View your digital ID', icon: <FiUser />, path: '/profile' },
         { title: 'Works', desc: 'Upskill', icon: <FiBook />, path: '#' },
+        { title: 'Emergency SOS', desc: 'Instant help in emergency', icon: <FiAlertOctagon style={{ color: '#ef4444' }} />, path: '/sos' },
         { title: 'Help Center', desc: 'Find nearby support offices', icon: <FiMapPin />, path: '#' }
     ];
 
