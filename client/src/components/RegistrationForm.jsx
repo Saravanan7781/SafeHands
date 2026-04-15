@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const SKILL_OPTIONS = [
-    'Construction',
-    'Plumbing',
-    'Electrical',
-    'Carpentry',
-    'Farming',
-    'Domestic Help',
-    'Driver',
-    'Tailoring',
-    'Other'
+    'construction',
+    'plumbing',
+    'electrical',
+    'carpentry',
+    'farming',
+    'domestic_help',
+    'driver',
+    'tailoring',
+    'other'
 ];
 
 const RegistrationForm = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         fullName: '',
@@ -57,16 +59,16 @@ const RegistrationForm = () => {
         try {
             // Simple client-side validation
             if (formData.skills.length === 0) {
-                throw new Error("Please select at least one skill.");
+                throw new Error(t('auth.error_no_skills'));
             }
             if (formData.phoneNumber.length < 10) {
-                throw new Error("Please enter a valid phone number.");
+                throw new Error(t('auth.error_invalid_phone'));
             }
 
             const response = await api.post('/workers/register', formData);
             navigate('/success', { state: { data: response.data } });
         } catch (err) {
-            setError(err.response?.data?.message || err.message || 'Registration failed. Please try again.');
+            setError(err.response?.data?.message || err.message || t('auth.error_register_failed'));
         } finally {
             setLoading(false);
         }
@@ -75,9 +77,9 @@ const RegistrationForm = () => {
     return (
         <div className="container">
             <div className="card">
-                <h2>Worker Registration</h2>
+                <h2>{t('auth.register_title')}</h2>
                 <p className="card-description">
-                    Enter worker details to generate a government-issued Unique Migrant ID.
+                    {t('auth.register_subtitle')}
                 </p>
 
                 {error && <div className="error-message" style={{ marginBottom: '1.5rem' }}>{error}</div>}
@@ -85,7 +87,7 @@ const RegistrationForm = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="form-grid">
                         <div className="form-group">
-                            <label htmlFor="fullName">Full Name</label>
+                            <label htmlFor="fullName">{t('auth.label_fullname')}</label>
                             <input
                                 type="text"
                                 id="fullName"
@@ -93,13 +95,13 @@ const RegistrationForm = () => {
                                 value={formData.fullName}
                                 onChange={handleChange}
                                 required
-                                placeholder="e.g. Rahul Kumar"
+                                placeholder={t('auth.placeholder_fullname')}
                             />
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                             <div className="form-group">
-                                <label htmlFor="age">Age</label>
+                                <label htmlFor="age">{t('auth.label_age')}</label>
                                 <input
                                     type="number"
                                     id="age"
@@ -113,7 +115,7 @@ const RegistrationForm = () => {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="phoneNumber">Phone Number</label>
+                                <label htmlFor="phoneNumber">{t('auth.label_phone')}</label>
                                 <input
                                     type="tel"
                                     id="phoneNumber"
@@ -121,14 +123,14 @@ const RegistrationForm = () => {
                                     value={formData.phoneNumber}
                                     onChange={handleChange}
                                     required
-                                    placeholder="10 digit number"
+                                    placeholder={t('auth.placeholder_phone_hint')}
                                     pattern="[0-9]{10}"
                                 />
                             </div>
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="password">Create Password</label>
+                            <label htmlFor="password">{t('auth.label_create_password')}</label>
                             <input
                                 type="password"
                                 id="password"
@@ -136,14 +138,14 @@ const RegistrationForm = () => {
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
-                                placeholder="Min 6 chars"
+                                placeholder={t('auth.placeholder_password_hint')}
                                 minLength="6"
                             />
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                             <div className="form-group">
-                                <label htmlFor="nativeState">Native State</label>
+                                <label htmlFor="nativeState">{t('auth.label_native_state')}</label>
                                 <input
                                     type="text"
                                     id="nativeState"
@@ -151,12 +153,12 @@ const RegistrationForm = () => {
                                     value={formData.nativeState}
                                     onChange={handleChange}
                                     required
-                                    placeholder="e.g. Bihar"
+                                    placeholder={t('auth.placeholder_state')}
                                 />
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="currentDistrict">Current District</label>
+                                <label htmlFor="currentDistrict">{t('auth.label_current_district')}</label>
                                 <input
                                     type="text"
                                     id="currentDistrict"
@@ -164,13 +166,13 @@ const RegistrationForm = () => {
                                     value={formData.currentDistrict}
                                     onChange={handleChange}
                                     required
-                                    placeholder="e.g. Mumbai"
+                                    placeholder={t('auth.placeholder_district')}
                                 />
                             </div>
                         </div>
 
                         <div className="form-group">
-                            <label>Skills</label>
+                            <label>{t('auth.label_skills')}</label>
                             <div className="checkbox-group">
                                 {SKILL_OPTIONS.map(skill => (
                                     <label
@@ -184,14 +186,14 @@ const RegistrationForm = () => {
                                             onChange={handleSkillChange}
                                             style={{ display: 'none' }} // Hide default checkbox
                                         />
-                                        {skill}
+                                        {t(`skills.${skill}`)}
                                     </label>
                                 ))}
                             </div>
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="preferredLanguage">Preferred Language</label>
+                            <label htmlFor="preferredLanguage">{t('auth.label_language')}</label>
                             <select
                                 id="preferredLanguage"
                                 name="preferredLanguage"
@@ -199,14 +201,14 @@ const RegistrationForm = () => {
                                 onChange={handleChange}
                                 required
                             >
-                                <option value="">Select Language...</option>
-                                <option value="Hindi">Hindi</option>
-                                <option value="English">English</option>
-                                <option value="Bengali">Bengali</option>
-                                <option value="Marathi">Marathi</option>
-                                <option value="Telugu">Telugu</option>
-                                <option value="Tamil">Tamil</option>
-                                <option value="Other">Other</option>
+                                <option value="">{t('auth.placeholder_language')}</option>
+                                <option value="Hindi">{t('languages.hindi')}</option>
+                                <option value="English">{t('languages.english')}</option>
+                                <option value="Bengali">{t('languages.bengali')}</option>
+                                <option value="Marathi">{t('languages.marathi')}</option>
+                                <option value="Telugu">{t('languages.telugu')}</option>
+                                <option value="Tamil">{t('languages.tamil')}</option>
+                                <option value="Other">{t('languages.other')}</option>
                             </select>
                         </div>
 
@@ -214,7 +216,7 @@ const RegistrationForm = () => {
 
                         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                             <button type="submit" className="btn-primary" disabled={loading} style={{ flex: 2 }}>
-                                {loading ? 'Processing Registration...' : 'Register Worker'}
+                                {loading ? t('auth.btn_registering') : t('auth.btn_register')}
                             </button>
                             {localStorage.getItem('user') && (
                                 <button
@@ -223,7 +225,7 @@ const RegistrationForm = () => {
                                     onClick={() => navigate(-1)}
                                     style={{ flex: 1 }}
                                 >
-                                    Cancel
+                                    {t('auth.btn_cancel')}
                                 </button>
                             )}
                         </div>

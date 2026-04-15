@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiSearch, FiMapPin, FiUsers, FiClipboard, FiCheckCircle, FiClock, FiActivity, FiArrowLeft, FiTrendingUp } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '../../dashboard.css';
 
 const AdvancedAdminDashboard = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const [searchTerm, setSearchTerm] = useState('');
@@ -71,11 +73,11 @@ const AdvancedAdminDashboard = () => {
         <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
             <div className="dashboard-header" style={{ marginBottom: '2.5rem' }}>
                 <div className="welcome-section">
-                    <button className="back-btn" onClick={() => navigate('/dashboard/admin')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1rem', padding: 0 }}>
-                        <FiArrowLeft /> Back to Admin
+                    <button className="back-btn" onClick={() => navigate('/dashboard/admin')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1rem', padding: '0.5rem 0' }}>
+                        <FiArrowLeft /> {t('admin.btn_back')}
                     </button>
-                    <h1>Advanced Analytics</h1>
-                    <p>Deep-dive into district-level performance and worker statistics.</p>
+                    <h1>{t('admin.analytics_title')}</h1>
+                    <p>{t('admin.analytics_subtitle')}</p>
                 </div>
             </div>
 
@@ -85,14 +87,14 @@ const AdvancedAdminDashboard = () => {
                         <FiMapPin className="input-icon" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                         <input
                             type="text"
-                            placeholder="Enter district name (e.g. Pune, Mumbai, Nagpur)..."
+                            placeholder={t('admin.placeholder_search_district')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             style={{ paddingLeft: '3rem', width: '100%', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '0.8rem 1rem 0.8rem 3rem' }}
                         />
                     </div>
                     <button type="submit" className="btn-primary" style={{ width: 'auto', padding: '0 2rem' }} disabled={searchLoading}>
-                        {searchLoading ? 'Searching...' : 'Analyze District'}
+                        {searchLoading ? t('admin.btn_searching') : t('admin.btn_analyze')}
                     </button>
                 </form>
             </div>
@@ -102,37 +104,37 @@ const AdvancedAdminDashboard = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                         <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
                             <FiTrendingUp style={{ color: 'var(--primary-color)' }} />
-                            Analytics for {selectedDistrictData.district}
+                            {t('admin.results_title', { district: selectedDistrictData.district })}
                         </h2>
-                        <button className="btn-secondary" onClick={() => setSelectedDistrictData(null)} style={{ width: 'auto' }}>Clear Results</button>
+                        <button className="btn-secondary" onClick={() => setSelectedDistrictData(null)} style={{ width: 'auto' }}>{t('admin.btn_clear')}</button>
                     </div>
 
                     <div className="stat-grid" style={{ marginBottom: '3rem' }}>
                         <div className="stat-card" style={{ borderLeft: '4px solid var(--primary-color)' }}>
                             <div className="stat-icon" style={{ background: 'var(--primary-light)', color: 'var(--primary-color)' }}><FiUsers /></div>
                             <div className="stat-info">
-                                <div className="stat-label">Total Workers</div>
+                                <div className="stat-label">{t('admin.stat_total_workers')}</div>
                                 <div className="stat-value">{selectedDistrictData.workersCount}</div>
                             </div>
                         </div>
                         <div className="stat-card" style={{ borderLeft: '4px solid #f59e0b' }}>
                             <div className="stat-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}><FiClipboard /></div>
                             <div className="stat-info">
-                                <div className="stat-label">Total Grievances</div>
+                                <div className="stat-label">{t('admin.stat_total_grievances')}</div>
                                 <div className="stat-value">{selectedDistrictData.grievancesCount}</div>
                             </div>
                         </div>
                         <div className="stat-card" style={{ borderLeft: '4px solid #10b981' }}>
                             <div className="stat-icon" style={{ background: '#ecfdf5', color: '#10b981' }}><FiCheckCircle /></div>
                             <div className="stat-info">
-                                <div className="stat-label">Resolved Cases</div>
+                                <div className="stat-label">{t('admin.stat_resolved_cases')}</div>
                                 <div className="stat-value">{selectedDistrictData.resolvedCount}</div>
                             </div>
                         </div>
                         <div className="stat-card" style={{ borderLeft: '4px solid #ef4444' }}>
                             <div className="stat-icon" style={{ background: '#fef2f2', color: '#ef4444' }}><FiClock /></div>
                             <div className="stat-info">
-                                <div className="stat-label">Pending Verifications</div>
+                                <div className="stat-label">{t('admin.stat_pending_verifications')}</div>
                                 <div className="stat-value">{selectedDistrictData.pendingVerifications}</div>
                             </div>
                         </div>
@@ -140,11 +142,11 @@ const AdvancedAdminDashboard = () => {
 
                     <div className="dashboard-grid">
                         <div className="dashboard-card" style={{ padding: '2rem' }}>
-                            <h3 className="card-title">Performance Breakdown</h3>
+                            <h3 className="card-title">{t('admin.section_performance')}</h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
                                 <div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-                                        <span>Grievance Resolution Efficiency</span>
+                                        <span>{t('admin.label_efficiency')}</span>
                                         <strong>{selectedDistrictData.grievancesCount > 0 ? Math.round((selectedDistrictData.resolvedCount / selectedDistrictData.grievancesCount) * 100) : 0}%</strong>
                                     </div>
                                     <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '4px' }}>
@@ -153,8 +155,8 @@ const AdvancedAdminDashboard = () => {
                                 </div>
                                 <div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-                                        <span>Verification Backlog</span>
-                                        <strong>{selectedDistrictData.pendingVerifications > 10 ? 'High' : 'Low'}</strong>
+                                        <span>{t('admin.label_backlog')}</span>
+                                        <strong>{selectedDistrictData.pendingVerifications > 10 ? t('admin.status_high') : t('admin.status_low')}</strong>
                                     </div>
                                     <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '4px' }}>
                                         <div style={{ height: '100%', width: `${selectedDistrictData.pendingVerifications > 50 ? 100 : selectedDistrictData.pendingVerifications * 2}%`, background: '#ef4444', borderRadius: '4px' }}></div>
@@ -164,14 +166,14 @@ const AdvancedAdminDashboard = () => {
                         </div>
 
                         <div className="dashboard-card" style={{ padding: '2rem', background: 'var(--primary-color)', color: 'white' }}>
-                            <h3 className="card-title" style={{ color: 'white' }}>District Status</h3>
-                            <p style={{ opacity: 0.9, fontSize: '0.9rem' }}>Comprehensive monitoring of migrant welfare in {selectedDistrictData.district}.</p>
+                            <h3 className="card-title" style={{ color: 'white' }}>{t('admin.section_district_status')}</h3>
+                            <p style={{ opacity: 0.9, fontSize: '0.9rem' }}>{t('admin.district_status_desc', { district: selectedDistrictData.district })}</p>
                             <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                                    <FiActivity /> <span>Active Monitoring: <strong>Enabled</strong></span>
+                                    <FiActivity /> <span>{t('admin.label_active_monitoring')}: <strong>{t('admin.label_enabled')}</strong></span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                                    <FiUsers /> <span>Enrolled Migrants: <strong>{selectedDistrictData.workersCount}</strong></span>
+                                    <FiUsers /> <span>{t('admin.label_enrolled_migrants')}: <strong>{selectedDistrictData.workersCount}</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -179,17 +181,17 @@ const AdvancedAdminDashboard = () => {
                 </div>
             ) : (
                 <div className="districts-list animate-fade-in">
-                    <h2 style={{ marginBottom: '1.5rem' }}>Active Districts Overview</h2>
+                    <h2 style={{ marginBottom: '1.5rem' }}>{t('admin.section_active_districts')}</h2>
                     {loading ? (
                         <div style={{ textAlign: 'center', padding: '4rem' }}>
                             <div className="loader"></div>
-                            <p>Loading district list...</p>
+                            <p>{t('admin.loading_districts')}</p>
                         </div>
                     ) : districts.length === 0 ? (
                         <div className="dashboard-card" style={{ textAlign: 'center', padding: '4rem' }}>
                             <FiMapPin size={48} style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }} />
-                            <h3>No active districts found</h3>
-                            <p>Start registering workers to see regional data.</p>
+                            <h3>{t('admin.empty_districts_title')}</h3>
+                            <p>{t('admin.empty_districts_desc')}</p>
                         </div>
                     ) : (
                         <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
@@ -208,7 +210,7 @@ const AdvancedAdminDashboard = () => {
                                         </div>
                                         <div>
                                             <h4 style={{ margin: 0 }}>{d.name}</h4>
-                                            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{d.workerCount} Workers</span>
+                                            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{t('admin.worker_count', { count: d.workerCount })}</span>
                                         </div>
                                     </div>
                                 </div>

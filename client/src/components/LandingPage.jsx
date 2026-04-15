@@ -1,9 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiShield } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 
 const LandingPage = () => {
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (e) => {
+        i18n.changeLanguage(e.target.value);
+    };
 
     return (
         <div className="landing-page">
@@ -11,34 +17,54 @@ const LandingPage = () => {
                 <div className="logo-section">
                     <FiShield className="logo-icon" style={{ fontSize: '2.5rem', color: 'var(--primary-color)' }} />
                     <div>
-                        <h1>SafeHands</h1>
-                        <p className="logo-subtitle">Migrant Worker Welfare Portal</p>
+                        <h1>{t('app.title')}</h1>
+                        <p className="logo-subtitle">{t('app.portal_subtitle')}</p>
                     </div>
                 </div>
                 <nav className="landing-nav">
+                    <div style={{ marginRight: '1rem' }}>
+                        <select 
+                            value={i18n.language} 
+                            onChange={changeLanguage}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid var(--border-color)',
+                                borderRadius: '4px',
+                                padding: '0.2rem 0.5rem',
+                                fontSize: '0.9rem',
+                                color: 'var(--text-secondary)'
+                            }}
+                        >
+                            <option value="en">English</option>
+                            <option value="hi">हिंदी</option>
+                            <option value="bn">বাংলা</option>
+                            <option value="or">ଓଡ଼ିଆ</option>
+                            <option value="te">తెలుగు</option>
+                            <option value="ta">தமிழ்</option>
+                        </select>
+                    </div>
                     <button
                         className="nav-item-btn"
                         onClick={() => navigate('/login')}
                     >
-                        Login
+                        {t('landing.login')}
                     </button>
                     <button
                         className="nav-link-button"
                         onClick={() => navigate('/register')}
                         style={{ padding: '0.5rem 1.5rem', borderRadius: '99px' }}
                     >
-                        Register
+                        {t('landing.register')}
                     </button>
                 </nav>
             </header>
 
             <main className="hero-section">
                 <div className="hero-content">
-                    <p className="hero-tagline">Government of India • Migrant Worker Protection</p>
-                    <h2>Protecting and Empowering Migrant Workers</h2>
+                    <p className="hero-tagline">{t('landing.tagline')}</p>
+                    <h2>{t('landing.heading')}</h2>
                     <p className="hero-subtitle">
-                        SafeHands is a unified digital platform for worker registration, rights protection,
-                        and welfare management, connecting workers, employers, and government agencies.
+                        {t('landing.description')}
                     </p>
 
                     <div className="action-buttons">
@@ -54,34 +80,34 @@ const LandingPage = () => {
                                 background: 'linear-gradient(135deg, var(--accent-color) 0%, #4f46e5 100%)'
                             }}
                         >
-                            Start Your Journey
+                            {t('landing.start_journey')}
                         </button>
                     </div>
 
                     <div className="hero-grid">
                         <div className="hero-card">
-                            <h3>Single Unified ID</h3>
-                            <p>Issue secure, verifiable IDs for migrant workers to access welfare schemes seamlessly.</p>
+                            <h3>{t('landing.card1_title')}</h3>
+                            <p>{t('landing.card1_desc')}</p>
                         </div>
                         <div className="hero-card">
-                            <h3>Multi-role Access</h3>
-                            <p>Dedicated views for workers, managers, and administrators to manage data responsibly.</p>
+                            <h3>{t('landing.card2_title')}</h3>
+                            <p>{t('landing.card2_desc')}</p>
                         </div>
                         <div className="hero-card">
-                            <h3>Safety & Compliance</h3>
-                            <p>Track registrations, grievances, and safety measures in one transparent system.</p>
+                            <h3>{t('landing.card3_title')}</h3>
+                            <p>{t('landing.card3_desc')}</p>
                         </div>
                     </div>
 
                     <div className="hero-meta">
-                        <span className="hero-pill">Secure • Transparent • Inclusive</span>
-                        <span className="hero-note">Built to support interstate and seasonal migration at scale.</span>
+                        <span className="hero-pill">{t('landing.meta_pill')}</span>
+                        <span className="hero-note">{t('landing.meta_note')}</span>
                     </div>
                 </div>
             </main>
 
             <footer className="landing-footer">
-                <p>&copy; {new Date().getFullYear()} SafeHands Initiative • Government of India</p>
+                <p>&copy; {new Date().getFullYear()} {t('app.footer_text')}</p>
             </footer>
         </div>
     );

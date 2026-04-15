@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { FiPhone, FiLock, FiLogOut, FiArrowRight, FiShield } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 import api from '../api';
+import './Login.css';
 
 const Login = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         phoneNumber: '',
         password: ''
     });
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
@@ -20,8 +24,9 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
         setLoading(true);
+
+        const loadingToast = toast.loading(t('auth.toast_logging_in'));
 
         try {
             const response = await api.post('/auth/login', formData);
@@ -31,78 +36,107 @@ const Login = () => {
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
 
+            toast.success(t('auth.toast_login_success', { name: user.name }), { id: loadingToast });
+
             // Redirect based on role
-            switch (user.role) {
-                case 'worker':
-                    navigate('/dashboard/worker');
-                    break;
-                case 'manager':
-                    navigate('/dashboard/manager');
-                    break;
-                case 'admin':
-                    navigate('/dashboard/admin');
-                    break;
-                default:
-                    navigate('/');
-            }
+            setTimeout(() => {
+                switch (user.role) {
+                    case 'worker':
+                        navigate('/dashboard/worker');
+                        break;
+                    case 'manager':
+                        navigate('/dashboard/manager');
+                        break;
+                    case 'admin':
+                        navigate('/dashboard/admin');
+                        break;
+                    default:
+                        navigate('/');
+                }
+            }, 500);
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed');
+            const message = err.response?.data?.message || t('auth.toast_login_error');
+            toast.error(message, { id: loadingToast });
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="container">
-            <div className="card" style={{ maxWidth: '400px', margin: '2rem auto' }}>
-                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Login</h2>
+        <div className="login-container">
+            <div className="login-card">
+                <div className="login-header">
+                    <div className="login-logo">
+                        <FiShield />
+                        <span>{t('app.title')}</span>
+                    </div>
+                    <p>{t('auth.login_subtitle')}</p>
+                </div>
 
-                {error && <div className="error-message">{error}</div>}
-
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="phoneNumber">Phone Number</label>
-                        <input
-                            type="tel"
-                            name="phoneNumber"
-                            value={formData.phoneNumber}
-                            onChange={handleChange}
-                            required
-                            placeholder="Enter phone number"
-                        />
+                <form className="login-form" onSubmit={handleSubmit}>
+                    <div className="input-group">
+                        <label htmlFor="phoneNumber">{t('auth.label_phone')}</label>
+                        <div className="input-wrapper">
+                            <input
+                                type="tel"
+                                id="phoneNumber"
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleChange}
+                                required
+                                placeholder={t('auth.placeholder_phone')}
+                                autoComplete="tel"
+                                disabled={loading}
+                            />
+                            <FiPhone className="input-icon" />
+                        </div>
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                            placeholder="Enter password"
-                        />
+                    <div className="input-group">
+                        <label htmlFor="password">{t('auth.label_password')}</label>
+                        <div className="input-wrapper">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                                placeholder={t('auth.placeholder_password')}
+                                autoComplete="current-password"
+                                disabled={loading}
+                            />
+                            <FiLock className="input-icon" />
+                        </div>
                     </div>
 
                     <button
                         type="submit"
-                        className="btn-primary"
-                        style={{ width: '100%', marginTop: '1rem' }}
+                        className="login-button"
                         disabled={loading}
                     >
-                        {loading ? 'Logging in...' : 'Login'}
+                        {loading ? (
+                            <>
+                                <div className="loading-spinner"></div>
+                                <span>{t('auth.btn_logging_in')}</span>
+                            </>
+                        ) : (
+                            <>
+                                <span>{t('auth.btn_login')}</span>
+                                <FiArrowRight />
+                            </>
+                        )}
                     </button>
                 </form>
 
-                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                    <p style={{ fontSize: '0.9rem', color: '#666' }}>
-                        Don't have an account? <span
-                            style={{ color: 'var(--primary-color)', cursor: 'pointer', fontWeight: '500' }}
-                            onClick={() => navigate('/register')}
-                        >
-                            Register here
-                        </span>
-                    </p>
+                <div className="login-footer">
+                    {t('auth.text_no_account')}
+                    <span
+                        className="register-link"
+                        onClick={() => navigate('/register')}
+                    >
+                        {t('auth.link_register')}
+                    </span>
                 </div>
             </div>
         </div>

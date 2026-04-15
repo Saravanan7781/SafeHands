@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../api';
 
 const GrievanceForm = () => {
+    const { t } = useTranslation();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
@@ -18,13 +20,13 @@ const GrievanceForm = () => {
             const response = await api.post('/grievances', { title, description });
 
             if (response.status === 201) {
-                setMessage('Grievance filed successfully!');
+                setMessage(t('grievance.success_msg', 'Grievance filed successfully!'));
                 setTitle('');
                 setDescription('');
                 setTimeout(() => navigate('/dashboard/worker'), 2000);
             }
         } catch (error) {
-            setMessage(error.response?.data?.message || 'Failed to file grievance. Please try again.');
+            setMessage(error.response?.data?.message || t('grievance.error_msg', 'Failed to file grievance. Please try again.'));
         } finally {
             setLoading(false);
         }
@@ -33,39 +35,39 @@ const GrievanceForm = () => {
     return (
         <div className="container">
             <div className="card" style={{ maxWidth: '600px', margin: '2rem auto' }}>
-                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', color: 'var(--primary)' }}>File a Grievance</h2>
+                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', color: 'var(--primary)' }}>{t('grievance.form_title')}</h2>
                 {message && (
-                    <div className={`alert ${message.includes('successfully') ? 'alert-success' : 'alert-error'}`}
+                    <div className={`alert ${message.includes('successfully') || message === t('grievance.success_msg') ? 'alert-success' : 'alert-error'}`}
                         style={{
                             padding: '1rem',
                             borderRadius: '4px',
                             marginBottom: '1rem',
-                            backgroundColor: message.includes('successfully') ? '#d4edda' : '#f8d7da',
-                            color: message.includes('successfully') ? '#155724' : '#721c24'
+                            backgroundColor: (message.includes('successfully') || message === t('grievance.success_msg')) ? '#d4edda' : '#f8d7da',
+                            color: (message.includes('successfully') || message === t('grievance.success_msg')) ? '#155724' : '#721c24'
                         }}>
                         {message}
                     </div>
                 )}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group" style={{ marginBottom: '1.2rem' }}>
-                        <label htmlFor="title" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Title / Subject</label>
+                        <label htmlFor="title" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>{t('grievance.label_title')}</label>
                         <input
                             type="text"
                             id="title"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Brief title of the issue"
+                            placeholder={t('grievance.placeholder_title')}
                             required
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #ddd' }}
                         />
                     </div>
                     <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                        <label htmlFor="description" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Description</label>
+                        <label htmlFor="description" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>{t('grievance.label_description')}</label>
                         <textarea
                             id="description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Describe your grievance in detail"
+                            placeholder={t('grievance.placeholder_description')}
                             required
                             rows="5"
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #ddd', resize: 'vertical' }}
@@ -78,7 +80,7 @@ const GrievanceForm = () => {
                             disabled={loading}
                             style={{ flex: 1, padding: '0.75rem' }}
                         >
-                            {loading ? 'Submitting...' : 'Submit Grievance'}
+                            {loading ? t('grievance.btn_submitting') : t('grievance.btn_submit')}
                         </button>
                         <button
                             type="button"
@@ -86,7 +88,7 @@ const GrievanceForm = () => {
                             onClick={() => navigate('/dashboard/worker')}
                             style={{ padding: '0.75rem' }}
                         >
-                            Cancel
+                            {t('grievance.btn_cancel')}
                         </button>
                     </div>
                 </form>

@@ -3,8 +3,10 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FiUserPlus, FiArrowLeft, FiUser, FiPhone, FiLock, FiMapPin } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const ManagerRegistrationForm = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -26,11 +28,11 @@ const ManagerRegistrationForm = () => {
             await axios.post('http://localhost:5000/api/admin/register-manager', formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            toast.success('District Manager onboarded successfully!');
+            toast.success(t('admin.toast_onboard_success'));
             navigate('/dashboard/admin');
         } catch (error) {
             console.error('Error registering manager:', error);
-            toast.error(error.response?.data?.message || 'Failed to onboard manager.');
+            toast.error(error.response?.data?.message || t('admin.toast_onboard_error'));
         } finally {
             setLoading(false);
         }
@@ -57,7 +59,7 @@ const ManagerRegistrationForm = () => {
                         alignItems: 'center',
                         gap: '0.4rem',
                         cursor: 'pointer',
-                        padding: '0.4rem 0.8rem',
+                        padding: '0.5rem 1rem',
                         borderRadius: '8px',
                         fontSize: '0.8rem',
                         fontWeight: 500,
@@ -67,7 +69,7 @@ const ManagerRegistrationForm = () => {
                     onMouseEnter={(e) => e.currentTarget.style.transform = 'translateX(-3px)'}
                     onMouseLeave={(e) => e.currentTarget.style.transform = 'translateX(0)'}
                 >
-                    <FiArrowLeft /> Back
+                    <FiArrowLeft /> {t('admin.btn_back_short')}
                 </button>
             </div>
 
@@ -96,13 +98,13 @@ const ManagerRegistrationForm = () => {
                     }}>
                         <FiUserPlus />
                     </div>
-                    <h2 style={{ fontSize: '1.35rem', fontWeight: 700, margin: '0 0 0.2rem 0', color: '#1e293b' }}>Onboard Manager</h2>
-                    <p style={{ color: '#64748b', fontSize: '0.85rem' }}>Assign regional leadership credentials.</p>
+                    <h2 style={{ fontSize: '1.35rem', fontWeight: 700, margin: '0 0 0.2rem 0', color: '#1e293b' }}>{t('admin.onboard_title')}</h2>
+                    <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t('admin.onboard_subtitle')}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div className="form-group">
-                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>Full Legal Name</label>
+                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>{t('admin.label_fullname')}</label>
                         <div style={{ position: 'relative' }}>
                             <FiUser style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                             <input
@@ -111,7 +113,7 @@ const ManagerRegistrationForm = () => {
                                 required
                                 value={formData.fullName}
                                 onChange={handleChange}
-                                placeholder="e.g. Dr. Satish Kulkarni"
+                                placeholder={t('admin.placeholder_fullname')}
                                 style={{
                                     width: '100%',
                                     padding: '0.6rem 0.8rem 0.6rem 2.2rem',
@@ -126,7 +128,7 @@ const ManagerRegistrationForm = () => {
                     </div>
 
                     <div className="form-group">
-                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>Official Contact & Region</label>
+                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>{t('admin.label_contact_region')}</label>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
                             <div style={{ position: 'relative' }}>
                                 <FiPhone style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
@@ -137,7 +139,7 @@ const ManagerRegistrationForm = () => {
                                     pattern="[0-9]{10}"
                                     value={formData.phoneNumber}
                                     onChange={handleChange}
-                                    placeholder="Phone"
+                                    placeholder={t('admin.placeholder_phone')}
                                     style={{
                                         width: '100%',
                                         padding: '0.6rem 0.8rem 0.6rem 2.2rem',
@@ -156,7 +158,7 @@ const ManagerRegistrationForm = () => {
                                     required
                                     value={formData.currentDistrict}
                                     onChange={handleChange}
-                                    placeholder="District"
+                                    placeholder={t('admin.placeholder_district')}
                                     style={{
                                         width: '100%',
                                         padding: '0.6rem 0.8rem 0.6rem 2.2rem',
@@ -171,7 +173,7 @@ const ManagerRegistrationForm = () => {
                     </div>
 
                     <div className="form-group">
-                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>Portal Password</label>
+                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>{t('admin.label_password')}</label>
                         <div style={{ position: 'relative' }}>
                             <FiLock style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                             <input
@@ -181,7 +183,7 @@ const ManagerRegistrationForm = () => {
                                 minLength="6"
                                 value={formData.password}
                                 onChange={handleChange}
-                                placeholder="Min 6 characters"
+                                placeholder={t('admin.placeholder_password_hint')}
                                 style={{
                                     width: '100%',
                                     padding: '0.6rem 0.8rem 0.6rem 2.2rem',
@@ -213,15 +215,15 @@ const ManagerRegistrationForm = () => {
                             }}
                         >
                             {loading ? (
-                                'Onboarding...'
+                                t('admin.btn_onboarding')
                             ) : (
                                 <>
-                                    <FiUserPlus /> Onboard Manager
+                                    <FiUserPlus /> {t('admin.btn_onboard')}
                                 </>
                             )}
                         </button>
                         <p style={{ textAlign: 'center', fontSize: '0.7rem', color: '#94a3b8', marginTop: '0.8rem' }}>
-                            Authorized administrative action.
+                            {t('admin.text_authorized_action')}
                         </p>
                     </div>
                 </form>

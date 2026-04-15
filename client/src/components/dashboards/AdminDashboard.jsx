@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FiUsers, FiCheckCircle, FiUserPlus, FiSearch, FiBarChart2, FiGlobe, FiShield, FiActivity, FiMapPin, FiBriefcase } from 'react-icons/fi';
 import '../../dashboard.css';
+import { useTranslation } from 'react-i18next';
 
 const AdminDashboard = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const userString = localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
@@ -47,29 +49,29 @@ const AdminDashboard = () => {
 
     const adminActions = [
         {
-            title: 'Advanced Dashboard',
-            desc: 'Detailed district-wise analytics',
+            title: t('admin.qa_adv_dashboard_title', 'Advanced Dashboard'),
+            desc: t('admin.qa_adv_dashboard_desc', 'Detailed district-wise analytics'),
             icon: <FiActivity />,
             path: '/admin/analytics',
             color: 'var(--primary-color)'
         },
         {
-            title: 'Register Manager',
-            desc: 'Onboard new managers for districts',
+            title: t('admin.qa_register_manager_title', 'Register Manager'),
+            desc: t('admin.qa_register_manager_desc', 'Onboard new managers for districts'),
             icon: <FiUserPlus />,
             path: '/admin/register-manager',
             color: 'var(--primary-color)'
         },
         {
-            title: 'Manager Directory',
-            desc: 'Search and view manager profiles',
+            title: t('admin.qa_manager_dir_title', 'Manager Directory'),
+            desc: t('admin.qa_manager_dir_desc', 'Search and view manager profiles'),
             icon: <FiSearch />,
             path: '/admin/managers',
             color: 'var(--accent-color)'
         },
         {
-            title: 'Performance Reports',
-            desc: 'Monthly welfare and task reports',
+            title: t('admin.qa_perf_reports_title', 'Performance Reports'),
+            desc: t('admin.qa_perf_reports_desc', 'Monthly welfare and task reports'),
             icon: <FiBarChart2 />,
             path: '/admin/reports',
             color: '#f59e0b'

@@ -4,8 +4,10 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useNavigate } from 'react-router-dom';
 import { FiBriefcase, FiCheckCircle, FiClock, FiPlus, FiAlertCircle, FiTrendingUp, FiArrowDown } from 'react-icons/fi';
 import api from '../api';
+import { useTranslation } from 'react-i18next';
 
 const Profile = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -40,7 +42,7 @@ const Profile = () => {
             setShowJobForm(false);
             setNewJob({ companyName: '', supervisorNumber: '', role: '' });
             fetchUserProfile();
-            toast.success('Employment details submitted for manager verification.', {
+            toast.success(t('profile.success_msg'), {
                 duration: 4000,
                 style: {
                     borderRadius: '10px',
@@ -56,7 +58,7 @@ const Profile = () => {
         }
     };
 
-    if (loading) return <div className="container" style={{ padding: '2rem', textAlign: 'center' }}>Loading Profile...</div>;
+    if (loading) return <div className="container" style={{ padding: '2rem', textAlign: 'center' }}>{t('profile.loading')}</div>;
     if (!user) return null;
 
     const qrData = `Name: ${user.fullName}\nID: ${user.migrantId || 'N/A'}\nPhone: ${user.phoneNumber}\nState: ${user.nativeState || 'N/A'}`;
@@ -66,65 +68,65 @@ const Profile = () => {
             <div className="card profile-card" style={{ width: '100%', display: 'flex', flexWrap: 'wrap', gap: '2.5rem', marginBottom: '2.5rem' }}>
                 <div className="profile-details" style={{ flex: '1', minWidth: '300px' }}>
                     <h2 style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid var(--primary-color)', paddingBottom: '0.5rem', marginBottom: '1.5rem', color: 'var(--primary-color)' }}>
-                        User Profile
+                        {t('profile.title')}
                     </h2>
 
                     <div className="details-grid">
                         <div className="detail-item">
-                            <span className="label">Full Name</span>
+                            <span className="label">{t('profile.label_name')}</span>
                             <span className="value">{user.fullName || 'N/A'}</span>
                         </div>
                         {user.migrantId && (
                             <div className="detail-item">
-                                <span className="label">Migrant ID</span>
+                                <span className="label">{t('profile.label_id')}</span>
                                 <span className="value">{user.migrantId}</span>
                             </div>
                         )}
                         <div className="detail-item">
-                            <span className="label">Phone Number</span>
+                            <span className="label">{t('profile.label_phone')}</span>
                             <span className="value">{user.phoneNumber || 'N/A'}</span>
                         </div>
                         {user.age && (
                             <div className="detail-item">
-                                <span className="label">Age</span>
+                                <span className="label">{t('profile.label_age')}</span>
                                 <span className="value">{user.age}</span>
                             </div>
                         )}
                         {user.nativeState && (
                             <div className="detail-item">
-                                <span className="label">Native State</span>
+                                <span className="label">{t('profile.label_state')}</span>
                                 <span className="value">{user.nativeState}</span>
                             </div>
                         )}
                         {user.currentDistrict && (
                             <div className="detail-item">
-                                <span className="label">Current District</span>
+                                <span className="label">{t('profile.label_district')}</span>
                                 <span className="value">{user.currentDistrict}</span>
                             </div>
                         )}
                         <div className="detail-item" style={{ gridColumn: 'span 2' }}>
-                            <span className="label">Skills</span>
+                            <span className="label">{t('profile.label_skills')}</span>
                             <span className="value">{Array.isArray(user.skills) ? user.skills.join(', ') : user.skills}</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="profile-qr" style={{ flex: '0 0 320px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(145deg, #f0f9ff, #e6f7ff)', padding: '2rem', borderRadius: '12px' }}>
-                    <h3 style={{ marginBottom: '1.5rem', color: '#0056b3' }}>Digital Identity</h3>
+                    <h3 style={{ marginBottom: '1.5rem', color: '#0056b3' }}>{t('profile.qr_title')}</h3>
                     <div style={{ padding: '1.5rem', background: 'white', borderRadius: '16px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
                         <QRCodeSVG value={qrData} size={200} level={"H"} includeMargin={true} />
                     </div>
-                    <p style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>Scan to verify identity and skills.</p>
+                    <p style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>{t('profile.qr_desc')}</p>
                 </div>
             </div>
 
             {/* Employment Section */}
             <div className="dashboard-section">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h2 className="section-title"><FiBriefcase /> Employment Progress</h2>
+                    <h2 className="section-title"><FiBriefcase /> {t('profile.section_employment')}</h2>
                     {user.role === 'worker' && user.currentEmployment?.status !== 'pending' && (
                         <button className="btn-primary" style={{ width: 'auto', padding: '0.6rem 1.2rem' }} onClick={() => setShowJobForm(!showJobForm)}>
-                            <FiPlus /> {user.currentEmployment?.status === 'active' ? 'Switch Company' : 'Add Current Job'}
+                            <FiPlus /> {user.currentEmployment?.status === 'active' ? t('profile.btn_switch_company') : t('profile.btn_add_job')}
                         </button>
                     )}
                 </div>
@@ -133,21 +135,21 @@ const Profile = () => {
                     <div className="dashboard-card" style={{ marginBottom: '2rem', borderLeft: '6px solid var(--accent-color)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div>
-                                <h3 style={{ color: 'var(--primary-color)', marginBottom: '0.5rem' }}>Current Status</h3>
+                                <h3 style={{ color: 'var(--primary-color)', marginBottom: '0.5rem' }}>{t('profile.status_title')}</h3>
                                 {user.currentEmployment?.status === 'active' ? (
                                     <div style={{ display: 'flex', gap: '2rem' }}>
-                                        <div><strong>Company:</strong> {user.currentEmployment.companyName}</div>
-                                        <div><strong>Role:</strong> {user.currentEmployment.role}</div>
-                                        <div><span className="status-badge status-completed">Verified & Active</span></div>
+                                        <div><strong>{t('profile.label_company')}:</strong> {user.currentEmployment.companyName}</div>
+                                        <div><strong>{t('profile.label_role')}:</strong> {user.currentEmployment.role}</div>
+                                        <div><span className="status-badge status-completed">{t('profile.status_active')}</span></div>
                                     </div>
                                 ) : user.currentEmployment?.status === 'pending' ? (
                                     <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                                        <div><strong>Company:</strong> {user.currentEmployment.companyName}</div>
-                                        <div><span className="status-badge status-pending"><FiClock /> Waiting for Verification</span></div>
-                                        <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>A manager in {user.currentDistrict} will verify your details soon.</p>
+                                        <div><strong>{t('profile.label_company')}:</strong> {user.currentEmployment.companyName}</div>
+                                        <div><span className="status-badge status-pending"><FiClock /> {t('profile.status_pending')}</span></div>
+                                        <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{t('profile.status_pending_desc', { district: user.currentDistrict })}</p>
                                     </div>
                                 ) : (
-                                    <p style={{ color: 'var(--text-secondary)' }}>Currently not linked to any verified company.</p>
+                                    <p style={{ color: 'var(--text-secondary)' }}>{t('profile.status_none')}</p>
                                 )}
                             </div>
                         </div>
@@ -156,29 +158,29 @@ const Profile = () => {
 
                 {showJobForm && (
                     <div className="card" style={{ marginBottom: '2rem', background: '#f8fafc', padding: '2rem' }}>
-                        <h3 style={{ marginBottom: '1.5rem' }}>Submit New Employment Details</h3>
+                        <h3 style={{ marginBottom: '1.5rem' }}>{t('profile.form_title')}</h3>
                         <form onSubmit={handleAddJob} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', alignItems: 'end' }}>
                             <div className="form-group">
-                                <label>Company Name</label>
-                                <input type="text" value={newJob.companyName} onChange={e => setNewJob({ ...newJob, companyName: e.target.value })} required placeholder="e.g. DLF Construction" />
+                                <label>{t('profile.label_company')}</label>
+                                <input type="text" value={newJob.companyName} onChange={e => setNewJob({ ...newJob, companyName: e.target.value })} required placeholder={t('profile.placeholder_company')} />
                             </div>
                             <div className="form-group">
-                                <label>Supervisor Phone</label>
-                                <input type="text" value={newJob.supervisorNumber} onChange={e => setNewJob({ ...newJob, supervisorNumber: e.target.value })} required placeholder="e.g. 9876543210" />
+                                <label>{t('profile.label_supervisor')}</label>
+                                <input type="text" value={newJob.supervisorNumber} onChange={e => setNewJob({ ...newJob, supervisorNumber: e.target.value })} required placeholder={t('profile.placeholder_supervisor')} />
                             </div>
                             <div className="form-group">
-                                <label>Your Role</label>
-                                <input type="text" value={newJob.role} onChange={e => setNewJob({ ...newJob, role: e.target.value })} required placeholder="e.g. Electrician" />
+                                <label>{t('profile.label_role')}</label>
+                                <input type="text" value={newJob.role} onChange={e => setNewJob({ ...newJob, role: e.target.value })} required placeholder={t('profile.placeholder_role')} />
                             </div>
                             <button type="submit" className="btn-primary" disabled={submitting} style={{ height: '48px' }}>
-                                {submitting ? 'Submitting...' : 'Submit to Manager'}
+                                {submitting ? t('profile.btn_submitting') : t('profile.btn_submit')}
                             </button>
                         </form>
                     </div>
                 )}
 
                 {/* Employment Timeline */}
-                <h3 className="section-title" style={{ fontSize: '1.2rem', marginTop: '2.5rem', textAlign: 'center' }}><FiTrendingUp /> Professional Journey</h3>
+                <h3 className="section-title" style={{ fontSize: '1.2rem', marginTop: '2.5rem', textAlign: 'center' }}><FiTrendingUp /> {t('profile.section_timeline')}</h3>
                 <div className="timeline-wrapper">
                     {user.employmentHistory && user.employmentHistory.length > 0 ? (
                         user.employmentHistory.map((job, index) => (
@@ -195,13 +197,13 @@ const Profile = () => {
                                                 <p className="job-role">{job.role}</p>
                                             </div>
                                             <div className="job-date">
-                                                <FiClock /> {new Date(job.startDate).toLocaleDateString()} - {job.endDate ? new Date(job.endDate).toLocaleDateString() : 'Present'}
+                                                <FiClock /> {new Date(job.startDate).toLocaleDateString()} - {job.endDate ? new Date(job.endDate).toLocaleDateString() : t('status.present', 'Present')}
                                             </div>
                                         </div>
 
                                         <div className="job-details-footer">
                                             <div className="supervisor-info">
-                                                <span className="info-label">Supervisor</span>
+                                                <span className="info-label">{t('profile.timeline_supervisor')}</span>
                                                 <span className="info-val">{job.supervisorNumber}</span>
                                             </div>
                                             {job.duration && (
@@ -209,7 +211,7 @@ const Profile = () => {
                                                     <FiTrendingUp /> {job.duration}
                                                 </div>
                                             )}
-                                            {!job.endDate && <span className="active-badge">Active</span>}
+                                            {!job.endDate && <span className="active-badge">{t('profile.timeline_active')}</span>}
                                         </div>
                                     </div>
                                 </div>
@@ -252,7 +254,7 @@ const Profile = () => {
                     ) : (
                         <div className="empty-timeline">
                             <FiAlertCircle size={40} />
-                            <p>No verified work history found on your timeline yet.</p>
+                            <p>{t('profile.empty_timeline')}</p>
                         </div>
                     )}
                 </div>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { FiAlertCircle, FiNavigation, FiCheckCircle, FiShield, FiActivity } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 import './SOSSection.css';
 
 const SOSSection = () => {
+    const { t } = useTranslation();
     const [status, setStatus] = useState('idle'); // idle, locating, sending, sent, error
     const [errorMsg, setErrorMsg] = useState('');
     const [alertId, setAlertId] = useState(null);
@@ -43,7 +45,7 @@ const SOSSection = () => {
     const triggerSOS = async () => {
         if (!navigator.geolocation) {
             setStatus('error');
-            setErrorMsg('Geolocation is not supported by your browser.');
+            setErrorMsg(t('sos.error_not_supported', 'Geolocation is not supported by your browser.'));
             return;
         }
 
@@ -72,13 +74,13 @@ const SOSSection = () => {
                 } catch (error) {
                     console.error('SOS Trigger Error:', error);
                     setStatus('error');
-                    setErrorMsg('Server error. Please try calling emergency services.');
+                    setErrorMsg(t('sos.error_server', 'Server error. Please try calling emergency services.'));
                 }
             },
             (error) => {
                 console.error('Geolocation Error:', error);
                 setStatus('error');
-                setErrorMsg('Location access denied. SOS requires location to help you.');
+                setErrorMsg(t('sos.error_location_denied', 'Location access denied. SOS requires location to help you.'));
             },
             { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
         );
@@ -89,8 +91,8 @@ const SOSSection = () => {
             <div className="sos-card">
                 <div className="sos-header">
                     <FiShield className="sos-logo" />
-                    <h2>Emergency SOS</h2>
-                    <p>Press the button below only in case of a real emergency. Your location and profile will be shared with the district manager immediately.</p>
+                    <h2>{t('sos.title')}</h2>
+                    <p>{t('sos.desc')}</p>
                 </div>
 
                 <div className="sos-button-wrapper">
@@ -108,18 +110,18 @@ const SOSSection = () => {
                         {status === 'idle' && <div className="sos-pulse"></div>}
                     </button>
                     <p className="status-text">
-                        {status === 'idle' && "Press for emergency"}
-                        {status === 'locating' && "Getting your location..."}
-                        {status === 'sending' && "Notifying Manager..."}
-                        {status === 'sent' && "Alert Sent! Stay where you are."}
-                        {status === 'active' && "Live tracking active. Help is on the way."}
+                        {status === 'idle' && t('sos.status_idle')}
+                        {status === 'locating' && t('sos.status_locating')}
+                        {status === 'sending' && t('sos.status_sending')}
+                        {status === 'sent' && t('sos.status_sent')}
+                        {status === 'active' && t('sos.status_active')}
                         {status === 'error' && errorMsg}
                     </p>
                 </div>
 
                 {(status === 'sent' || status === 'active') && (
                     <div className="sos-success-msg">
-                        <FiActivity className="live-icon" /> Live tracking is ON.
+                        <FiActivity className="live-icon" /> {t('sos.live_tracking_on')}
                     </div>
                 )}
             </div>

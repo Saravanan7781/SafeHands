@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { FiCheckCircle, FiStar, FiAlertTriangle, FiEdit3, FiUser, FiBook, FiMapPin, FiBell, FiClock, FiAlertOctagon } from 'react-icons/fi';
 import api from '../../api';
 import '../../dashboard.css';
+import { useTranslation } from 'react-i18next';
 
 const WorkerDashboard = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [grievanceStats, setGrievanceStats] = useState({ pending: 0, underReview: 0, resolved: 0 });
     const userString = localStorage.getItem('user');
@@ -28,21 +30,21 @@ const WorkerDashboard = () => {
 
     const stats = [
         {
-            label: 'Active Grievances',
+            label: t('worker.stat_active_grievances', 'Active Grievances'),
             value: grievanceStats.pending.toString(),
             icon: <FiAlertTriangle />,
             color: '#ef4444',
             clickable: true
         },
         {
-            label: 'Under Review',
+            label: t('worker.stat_under_review', 'Under Review'),
             value: grievanceStats.underReview.toString(),
             icon: <FiClock />,
             color: '#f59e0b',
             clickable: true
         },
         {
-            label: 'Resolved Grievances',
+            label: t('worker.stat_resolved_grievances', 'Resolved Grievances'),
             value: grievanceStats.resolved.toString(),
             icon: <FiCheckCircle />,
             color: '#10b981',
@@ -51,19 +53,19 @@ const WorkerDashboard = () => {
     ];
 
     const quickActions = [
-        { title: 'File Grievance', desc: 'Report an issue or complaint', icon: <FiEdit3 />, path: '/file-grievance' },
-        { title: 'My ID Card', desc: 'View your digital ID', icon: <FiUser />, path: '/profile' },
-        { title: 'Works', desc: 'Upskill', icon: <FiBook />, path: '#' },
-        { title: 'Emergency SOS', desc: 'Instant help in emergency', icon: <FiAlertOctagon style={{ color: '#ef4444' }} />, path: '/sos' },
-        { title: 'Help Center', desc: 'Find nearby support offices', icon: <FiMapPin />, path: '#' }
+        { title: t('worker.qa_file_grievance_title', 'File Grievance'), desc: t('worker.qa_file_grievance_desc', 'Report an issue or complaint'), icon: <FiEdit3 />, path: '/file-grievance' },
+        { title: t('worker.qa_id_card_title', 'My ID Card'), desc: t('worker.qa_id_card_desc', 'View your digital ID'), icon: <FiUser />, path: '/profile' },
+        { title: t('worker.qa_works_title', 'Works'), desc: t('worker.qa_works_desc', 'Upskill'), icon: <FiBook />, path: '#' },
+        { title: t('worker.qa_sos_title', 'Emergency SOS'), desc: t('worker.qa_sos_desc', 'Instant help in emergency'), icon: <FiAlertOctagon style={{ color: '#ef4444' }} />, path: '/sos' },
+        { title: t('worker.qa_help_title', 'Help Center'), desc: t('worker.qa_help_desc', 'Find nearby support offices'), icon: <FiMapPin />, path: '#' }
     ];
 
     return (
         <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
             <div className="dashboard-header">
                 <div className="welcome-section">
-                    <h1>Namaste, {user?.fullName || 'Worker'}!</h1>
-                    <p>Welcome to your SafeHands portal. Your welfare is our priority.</p>
+                    <h1>{t('worker.welcome_title', { name: user?.fullName || 'Worker' })}</h1>
+                    <p>{t('worker.welcome_subtitle')}</p>
                 </div>
                 {/* <div className="page-actions">
                     <button className="btn-secondary" onClick={() => navigate('/profile')}>View Profile</button>
@@ -89,7 +91,7 @@ const WorkerDashboard = () => {
             </div>
 
             <div className="dashboard-section">
-                <h2 className="section-title">Quick Actions</h2>
+                <h2 className="section-title">{t('worker.section_quick_actions')}</h2>
                 <div className="dashboard-grid">
                     {quickActions.map((action, idx) => (
                         <div key={idx} className="action-tile" onClick={() => action.path !== '#' && navigate(action.path)}>
@@ -102,12 +104,12 @@ const WorkerDashboard = () => {
             </div>
 
             <div className="dashboard-section">
-                <h2 className="section-title">Latest Updates</h2>
+                <h2 className="section-title">{t('worker.section_latest_updates')}</h2>
                 <div className="dashboard-card" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                     <div style={{ fontSize: '2rem', color: 'var(--primary-color)' }}><FiBell /></div>
                     <div>
-                        <h3 className="card-title">Wage Compensation Policy Updated</h3>
-                        <p style={{ color: 'var(--text-secondary)' }}>New government guidelines for construction workers in Maharashtra have been released. Read more about your rights.</p>
+                        <h3 className="card-title">{t('worker.update_title')}</h3>
+                        <p style={{ color: 'var(--text-secondary)' }}>{t('worker.update_desc')}</p>
                     </div>
                 </div>
             </div>

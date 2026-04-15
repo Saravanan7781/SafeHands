@@ -24,7 +24,41 @@ import PublicRoute from './components/PublicRoute';
 import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
-import { FiShield } from 'react-icons/fi';
+import { FiShield, FiGlobe } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
+
+function LanguageSwitcher() {
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (e) => {
+    i18n.changeLanguage(e.target.value);
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-secondary)' }}>
+      <FiGlobe />
+      <select 
+        value={i18n.language} 
+        onChange={changeLanguage}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          fontSize: '0.9rem',
+          color: 'inherit',
+          cursor: 'pointer',
+          padding: '0'
+        }}
+      >
+        <option value="en">EN</option>
+        <option value="hi">HI</option>
+        <option value="bn">BN</option>
+        <option value="or">OR</option>
+        <option value="te">TE</option>
+        <option value="ta">TA</option>
+      </select>
+    </div>
+  );
+}
 
 function AppLayout() {
   const location = useLocation();
@@ -43,44 +77,49 @@ function AppLayout() {
     navigate('/login');
   };
 
+  const { t } = useTranslation();
+
   return (
     <div className="App">
       {!isLanding && (
         <header>
           <h1 onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <FiShield style={{ fontSize: '1.2em', color: 'var(--primary-color)' }} />
-            SafeHands
+            {t('app.title')}
           </h1>
-          {isLoggedIn && !isAuthPage ? (
-            <nav style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-              <button
-                onClick={() => {
-                  if (user?.role === 'worker') navigate('/dashboard/worker');
-                  else if (user?.role === 'manager') navigate('/dashboard/manager');
-                  else if (user?.role === 'admin') navigate('/dashboard/admin');
-                  else navigate('/');
-                }}
-                className="nav-item-btn"
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => navigate('/profile')}
-                className="nav-item-btn"
-              >
-                My Profile
-              </button>
-              <button
-                onClick={handleLogout}
-                className="btn-primary"
-                style={{ padding: '0.6rem 1.5rem', borderRadius: '99px', width: 'auto' }}
-              >
-                Logout
-              </button>
-            </nav>
-          ) : (
-            <p style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Migrant Worker Welfare Portal</p>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+            {isLoggedIn && !isAuthPage ? (
+              <nav style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                <button
+                  onClick={() => {
+                    if (user?.role === 'worker') navigate('/dashboard/worker');
+                    else if (user?.role === 'manager') navigate('/dashboard/manager');
+                    else if (user?.role === 'admin') navigate('/dashboard/admin');
+                    else navigate('/');
+                  }}
+                  className="nav-item-btn"
+                >
+                  {t('app.dashboard')}
+                </button>
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="nav-item-btn"
+                >
+                  {t('app.my_profile')}
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="btn-primary"
+                  style={{ padding: '0.6rem 1.5rem', borderRadius: '99px', width: 'auto' }}
+                >
+                  {t('app.logout')}
+                </button>
+              </nav>
+            ) : (
+              <p style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{t('app.portal_subtitle')}</p>
+            )}
+            <LanguageSwitcher />
+          </div>
         </header>
       )}
       <main>
@@ -131,7 +170,7 @@ function AppLayout() {
       </main>
       {!isLanding && (
         <footer>
-          <p>&copy; {new Date().getFullYear()} SafeHands Initiative • Government of India</p>
+          <p>&copy; {new Date().getFullYear()} {t('app.footer_text')}</p>
         </footer>
       )}
     </div>

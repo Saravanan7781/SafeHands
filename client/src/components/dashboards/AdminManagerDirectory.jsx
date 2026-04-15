@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiSearch, FiFilter, FiUser, FiMapPin, FiPhone, FiArrowLeft, FiShield } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '../../dashboard.css';
 
 const AdminManagerDirectory = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const [managers, setManagers] = useState([]);
@@ -36,18 +38,18 @@ const AdminManagerDirectory = () => {
         <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
             <div className="dashboard-header" style={{ marginBottom: '2rem' }}>
                 <div className="welcome-section">
-                    <button className="back-btn" onClick={() => navigate('/dashboard/admin')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1rem', padding: 0 }}>
-                        <FiArrowLeft /> Back to Admin
+                    <button className="back-btn" onClick={() => navigate('/dashboard/admin')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1rem', padding: '0.5rem 0' }}>
+                        <FiArrowLeft /> {t('admin.btn_back')}
                     </button>
-                    <h1>Manager Directory</h1>
-                    <p>Total {managers.length} Department Heads registered across districts.</p>
+                    <h1>{t('admin.manager_dir_title')}</h1>
+                    <p>{t('admin.manager_dir_subtitle', { count: managers.length })}</p>
                 </div>
 
                 <div className="search-input-wrapper" style={{ width: '400px', position: 'relative' }}>
                     <FiSearch className="input-icon" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                     <input
                         type="text"
-                        placeholder="Search by name or district..."
+                        placeholder={t('admin.placeholder_search_manager')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         style={{ paddingLeft: '3rem', width: '100%', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '0.8rem 1rem 0.8rem 3rem' }}
@@ -58,13 +60,13 @@ const AdminManagerDirectory = () => {
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '4rem' }}>
                     <div className="loader"></div>
-                    <p>Loading manager profiles...</p>
+                    <p>{t('admin.loading_managers')}</p>
                 </div>
             ) : filteredManagers.length === 0 ? (
                 <div className="dashboard-card" style={{ textAlign: 'center', padding: '4rem' }}>
                     <FiSearch size={48} style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }} />
-                    <h3>No managers found</h3>
-                    <p>Try adjusting your search criteria.</p>
+                    <h3>{t('admin.empty_managers_title')}</h3>
+                    <p>{t('admin.empty_managers_desc')}</p>
                 </div>
             ) : (
                 <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
@@ -77,17 +79,17 @@ const AdminManagerDirectory = () => {
                                 <div>
                                     <h3 style={{ margin: 0 }}>{manager.fullName}</h3>
                                     <span style={{ fontSize: '0.85rem', color: 'var(--primary-color)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                                        <FiShield size={14} /> Official Manager
+                                        <FiShield size={14} /> {t('admin.label_official_manager')}
                                     </span>
                                 </div>
                             </div>
 
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-secondary)' }}>
-                                    <FiMapPin /> <strong>District:</strong> {manager.currentDistrict}
+                                    <FiMapPin /> <strong>{t('admin.label_district_prefix')}</strong> {manager.currentDistrict}
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-secondary)' }}>
-                                    <FiPhone /> <strong>Phone:</strong> {manager.phoneNumber}
+                                    <FiPhone /> <strong>{t('admin.label_phone_prefix')}</strong> {manager.phoneNumber}
                                 </div>
                             </div>
                         </div>

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../api';
 
 const ManagerGrievanceView = () => {
+    const { t } = useTranslation();
     const [grievances, setGrievances] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -15,7 +17,7 @@ const ManagerGrievanceView = () => {
             const response = await api.get('/grievances/manager');
             setGrievances(response.data);
         } catch (err) {
-            setError(err.response?.data?.message || 'Server error while fetching grievances');
+            setError(err.response?.data?.message || t('manager.error_fetch_grievances', 'Server error while fetching grievances'));
             if (err.response?.status === 401) {
                 navigate('/login');
             }
@@ -37,7 +39,7 @@ const ManagerGrievanceView = () => {
                 setSelectedGrievance({ ...selectedGrievance, status: newStatus });
             }
         } catch (err) {
-            alert(err.response?.data?.message || 'Failed to update status');
+            alert(err.response?.data?.message || t('manager.error_update_status', 'Failed to update status'));
         }
     };
 
@@ -55,15 +57,15 @@ const ManagerGrievanceView = () => {
             <div className="card" style={{ padding: '2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                     <div>
-                        <h2>District Grievances</h2>
-                        <p style={{ color: 'var(--text-secondary)' }}>Managing issues for {user?.currentDistrict} district</p>
+                        <h2>{t('manager.grievance_title')}</h2>
+                        <p style={{ color: 'var(--text-secondary)' }}>{t('manager.grievance_subtitle', { district: user?.currentDistrict })}</p>
                     </div>
-                    <button onClick={() => navigate('/dashboard/manager')} className="btn-secondary">Back to Dashboard</button>
+                    <button onClick={() => navigate('/dashboard/manager')} className="btn-secondary">{t('manager.btn_back')}</button>
                 </div>
 
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '3rem' }}>
-                        <p>Loading grievances...</p>
+                        <p>{t('manager.loading_grievances')}</p>
                     </div>
                 ) : error ? (
                     <div className="error-message">
@@ -71,18 +73,18 @@ const ManagerGrievanceView = () => {
                     </div>
                 ) : grievances.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '3rem', background: '#f8fafc', borderRadius: 'var(--radius-md)' }}>
-                        <p>No grievances filed for this district.</p>
+                        <p>{t('manager.no_grievances')}</p>
                     </div>
                 ) : (
                     <div className="table-container">
                         <table className="custom-table">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Worker</th>
-                                    <th>Title</th>
-                                    <th>Status</th>
-                                    <th style={{ textAlign: 'center' }}>Details</th>
+                                    <th>{t('manager.table_date')}</th>
+                                    <th>{t('manager.table_worker')}</th>
+                                    <th>{t('manager.table_title')}</th>
+                                    <th>{t('manager.table_status')}</th>
+                                    <th style={{ textAlign: 'center' }}>{t('manager.table_details')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,14 +98,14 @@ const ManagerGrievanceView = () => {
                                         <td>{grievance.title}</td>
                                         <td>
                                             <span className={`status-badge ${getStatusClass(grievance.status)}`}>
-                                                {grievance.status}
+                                                {t(`status.${grievance.status === 'under review' ? 'under_review' : grievance.status}`, grievance.status)}
                                             </span>
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
                                             <button
                                                 className="btn-icon"
                                                 onClick={() => setSelectedGrievance(grievance)}
-                                                title="View Details"
+                                                title={t('manager.table_details')}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -124,12 +126,12 @@ const ManagerGrievanceView = () => {
                 <div className="modal-overlay" onClick={() => setSelectedGrievance(null)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>Grievance Details</h3>
+                            <h3>{t('manager.modal_grievance_title')}</h3>
                             <button className="close-button" onClick={() => setSelectedGrievance(null)}>&times;</button>
                         </div>
                         <div className="modal-body">
                             <div className="grievance-detail-item">
-                                <span className="grievance-detail-label">Title</span>
+                                <span className="grievance-detail-label">{t('manager.table_title')}</span>
                                 <div className="grievance-detail-value" style={{ fontWeight: '700', fontSize: '1.25rem' }}>
                                     {selectedGrievance.title}
                                 </div>
@@ -137,32 +139,32 @@ const ManagerGrievanceView = () => {
 
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                 <div className="grievance-detail-item">
-                                    <span className="grievance-detail-label">Worker</span>
+                                    <span className="grievance-detail-label">{t('manager.table_worker')}</span>
                                     <div className="grievance-detail-value">{selectedGrievance.worker?.fullName}</div>
                                 </div>
                                 <div className="grievance-detail-item">
-                                    <span className="grievance-detail-label">Phone</span>
+                                    <span className="grievance-detail-label">{t('manager.label_phone')}</span>
                                     <div className="grievance-detail-value">{selectedGrievance.worker?.phoneNumber}</div>
                                 </div>
                             </div>
 
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                 <div className="grievance-detail-item">
-                                    <span className="grievance-detail-label">Date Filed</span>
+                                    <span className="grievance-detail-label">{t('manager.modal_date_filed')}</span>
                                     <div className="grievance-detail-value">{new Date(selectedGrievance.createdAt).toLocaleString()}</div>
                                 </div>
                                 <div className="grievance-detail-item">
-                                    <span className="grievance-detail-label">Current Status</span>
+                                    <span className="grievance-detail-label">{t('profile.status_title')}</span>
                                     <div>
                                         <span className={`status-badge ${getStatusClass(selectedGrievance.status)}`}>
-                                            {selectedGrievance.status}
+                                            {t(`status.${selectedGrievance.status === 'under review' ? 'under_review' : selectedGrievance.status}`, selectedGrievance.status)}
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="grievance-detail-item">
-                                <span className="grievance-detail-label">Description</span>
+                                <span className="grievance-detail-label">{t('grievance.label_description')}</span>
                                 <div className="grievance-detail-value" style={{
                                     background: '#f8fafc',
                                     padding: '1rem',
@@ -175,21 +177,21 @@ const ManagerGrievanceView = () => {
                             </div>
 
                             <div className="grievance-detail-item" style={{ marginTop: '2rem' }}>
-                                <span className="grievance-detail-label">Update Status</span>
+                                <span className="grievance-detail-label">{t('manager.modal_update_status')}</span>
                                 <select
                                     className="form-control"
                                     value={selectedGrievance.status}
                                     onChange={(e) => handleStatusChange(selectedGrievance._id, e.target.value)}
                                     style={{ width: '100%', marginTop: '0.5rem' }}
                                 >
-                                    <option value="pending">Pending</option>
-                                    <option value="under review">Under Review</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="pending">{t('status.pending')}</option>
+                                    <option value="under review">{t('status.under_review')}</option>
+                                    <option value="completed">{t('status.resolved')}</option>
                                 </select>
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn-secondary" onClick={() => setSelectedGrievance(null)}>Close</button>
+                            <button className="btn-secondary" onClick={() => setSelectedGrievance(null)}>{t('manager.btn_close')}</button>
                         </div>
                     </div>
                 </div>
@@ -197,6 +199,5 @@ const ManagerGrievanceView = () => {
         </div>
     );
 };
-
 
 export default ManagerGrievanceView;

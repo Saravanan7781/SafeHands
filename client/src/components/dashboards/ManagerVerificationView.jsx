@@ -3,9 +3,11 @@ import { FiCheckCircle, FiClock, FiCheck, FiArrowLeft, FiAlertCircle } from 'rea
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '../../dashboard.css';
 
 const ManagerVerificationView = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const [pendingVerifications, setPendingVerifications] = useState([]);
@@ -19,7 +21,7 @@ const ManagerVerificationView = () => {
             setPendingVerifications(response.data);
         } catch (error) {
             console.error('Error fetching verifications:', error);
-            toast.error('Failed to load pending verifications.');
+            toast.error(t('manager.toast_verify_load_error', 'Failed to load pending verifications.'));
         } finally {
             setLoading(false);
         }
@@ -38,16 +40,17 @@ const ManagerVerificationView = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setPendingVerifications(pendingVerifications.filter(v => v._id !== workerId));
-            toast.success(`Employment ${action === 'verify' ? 'approved' : action}ed successfully.`);
+            const actionText = action === 'verify' ? t('manager.btn_approve') : t('manager.btn_reject');
+            toast.success(t('manager.toast_verify_success', { action: actionText }));
         } catch (error) {
             console.error('Verification Error:', error);
-            toast.error('Failed to process verification.');
+            toast.error(t('manager.toast_verify_process_error', 'Failed to process verification.'));
         }
     };
 
     const handleApproveAll = async () => {
         if (pendingVerifications.length === 0) return;
-        if (!window.confirm(`Are you sure you want to approve all ${pendingVerifications.length} submissions?`)) return;
+        if (!window.confirm(t('manager.confirm_approve_all', { count: pendingVerifications.length }))) return;
 
         try {
             const response = await axios.post('http://localhost:5000/api/workers/verify-all', {}, {
@@ -57,7 +60,7 @@ const ManagerVerificationView = () => {
             toast.success(response.data.message);
         } catch (error) {
             console.error('Bulk Approval Error:', error);
-            toast.error(error.response?.data?.message || 'Failed to approve all submissions.');
+            toast.error(error.response?.data?.message || t('status.error', 'Error'));
         }
     };
 
@@ -66,10 +69,10 @@ const ManagerVerificationView = () => {
             <div className="dashboard-header" style={{ marginBottom: '2rem' }}>
                 <div className="welcome-section">
                     <button className="back-btn" onClick={() => navigate('/dashboard/manager')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1rem', padding: 0 }}>
-                        <FiArrowLeft /> Back to Dashboard
+                        <FiArrowLeft /> {t('manager.btn_back')}
                     </button>
-                    <h1>Employment Verifications</h1>
-                    <p>Review and approve worker employment submissions in your district.</p>
+                    <h1>{t('manager.verify_title')}</h1>
+                    <p>{t('manager.verify_subtitle')}</p>
                 </div>
                 {pendingVerifications.length > 0 && (
                     <button
@@ -77,7 +80,7 @@ const ManagerVerificationView = () => {
                         style={{ width: 'auto', background: 'var(--success-color)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                         onClick={handleApproveAll}
                     >
-                        <FiCheck /> Approve All {pendingVerifications.length}
+                        <FiCheck /> {t('manager.btn_approve_all', { count: pendingVerifications.length })}
                     </button>
                 )}
             </div>
@@ -85,13 +88,13 @@ const ManagerVerificationView = () => {
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '4rem' }}>
                     <div className="loader"></div>
-                    <p>Loading pending verifications...</p>
+                    <p>{t('manager.loading_verifications')}</p>
                 </div>
             ) : pendingVerifications.length === 0 ? (
                 <div className="dashboard-card" style={{ textAlign: 'center', padding: '4rem' }}>
                     <FiCheckCircle size={48} style={{ color: 'var(--success-color)', marginBottom: '1rem' }} />
-                    <h3>All Clear!</h3>
-                    <p>There are no pending employment verification requests in your district.</p>
+                    <h3>{t('manager.verify_empty_title')}</h3>
+                    <p>{t('manager.verify_empty_desc')}</p>
                 </div>
             ) : (
                 <div className="dashboard-card" style={{ padding: 0 }}>
@@ -99,11 +102,11 @@ const ManagerVerificationView = () => {
                         <table className="custom-table">
                             <thead>
                                 <tr>
-                                    <th>Worker</th>
-                                    <th>Company</th>
-                                    <th>Role</th>
-                                    <th>Supervisor</th>
-                                    <th>Actions</th>
+                                    <th>{t('manager.table_worker')}</th>
+                                    <th>{t('manager.table_company')}</th>
+                                    <th>{t('manager.table_role')}</th>
+                                    <th>{t('manager.table_supervisor')}</th>
+                                    <th>{t('manager.table_actions')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,17 +125,17 @@ const ManagerVerificationView = () => {
                                                     className="btn-primary"
                                                     style={{ padding: '0.4rem 0.8rem', width: 'auto', background: 'var(--success-color)' }}
                                                     onClick={() => handleVerification(worker._id, 'verify')}
-                                                    title="Approve"
+                                                    title={t('manager.btn_approve')}
                                                 >
-                                                    Approve
+                                                    {t('manager.btn_approve')}
                                                 </button>
                                                 <button
                                                     className="btn-secondary"
                                                     style={{ padding: '0.4rem 0.8rem', borderColor: 'var(--error-color)', color: 'var(--error-color)' }}
                                                     onClick={() => handleVerification(worker._id, 'reject')}
-                                                    title="Reject"
+                                                    title={t('manager.btn_reject')}
                                                 >
-                                                    Reject
+                                                    {t('manager.btn_reject')}
                                                 </button>
                                             </div>
                                         </td>

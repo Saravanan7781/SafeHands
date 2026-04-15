@@ -93,34 +93,50 @@ const getManagerStats = async (req, res) => {
     }
 };
 
+const buildWorkerQuery = (queryParams) => {
+    const { state, minAge, maxAge, skills, name, company, currentCompanyOnly } = queryParams;
+    let query = { role: 'worker' };
+
+    if (name && name !== '') {
+        query.fullName = { $regex: name, $options: 'i' };
+    }
+
+    if (state && state !== '') {
+        query.nativeState = { $regex: state, $options: 'i' };
+    }
+    
+    if (company && company !== '') {
+        if (currentCompanyOnly === 'true') {
+            query['currentEmployment.companyName'] = { $regex: company, $options: 'i' };
+        } else {
+            query.$or = [
+                { 'employmentHistory.companyName': { $regex: company, $options: 'i' } },
+                { 'currentEmployment.companyName': { $regex: company, $options: 'i' } }
+            ];
+        }
+    }
+
+    if (minAge || maxAge) {
+        query.age = {};
+        if (minAge && minAge !== '') query.age.$gte = parseInt(minAge);
+        if (maxAge && maxAge !== '') query.age.$lte = parseInt(maxAge);
+        if (Object.keys(query.age).length === 0) delete query.age;
+    }
+
+    if (skills && skills !== '') {
+        const skillList = skills.split(',');
+        query.skills = { $in: skillList };
+    }
+
+    return query;
+};
+
 // @desc    Get all workers with filters
 // @route   GET /api/workers
 // @access  Private (Manager/Admin)
 const getAllWorkers = async (req, res) => {
     try {
-        const { state, minAge, maxAge, skills, name } = req.query;
-        let query = { role: 'worker' };
-
-        if (name && name !== '') {
-            query.fullName = { $regex: name, $options: 'i' };
-        }
-
-        if (state && state !== '') {
-            query.nativeState = { $regex: state, $options: 'i' };
-        }
-
-        if (minAge || maxAge) {
-            query.age = {};
-            if (minAge && minAge !== '') query.age.$gte = parseInt(minAge);
-            if (maxAge && maxAge !== '') query.age.$lte = parseInt(maxAge);
-            if (Object.keys(query.age).length === 0) delete query.age;
-        }
-
-        if (skills && skills !== '') {
-            const skillList = skills.split(',');
-            query.skills = { $in: skillList };
-        }
-
+        const query = buildWorkerQuery(req.query);
         const workers = await Worker.find(query).select('-password');
         res.json(workers);
     } catch (error) {
@@ -337,11 +353,17 @@ const deleteTimelineItem = async (req, res) => {
 
 const exportWorkersToExcel = async (req, res) => {
     try {
-        const district = req.user.currentDistrict;
-        const workers = await Worker.find({ currentDistrict: district, role: 'worker' });
+        const query = buildWorkerQuery(req.query);
+        
+        // Ensure manager can only export in their district if they are restricted
+        if (req.user.role === 'manager') {
+            query.currentDistrict = req.user.currentDistrict;
+        }
+
+        const workers = await Worker.find(query).select('-password');
 
         if (!workers || workers.length === 0) {
-            return res.status(404).json({ message: 'No workers found in this district' });
+            return res.status(404).json({ message: 'No workers found for these criteria' });
         }
 
         const data = workers.map(worker => ({
@@ -368,7 +390,7 @@ const exportWorkersToExcel = async (req, res) => {
         const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', `attachment; filename=Workers_${district}_${new Date().toISOString().split('T')[0]}.xlsx`);
+        res.setHeader('Content-Disposition', `attachment; filename=Workers_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
         res.send(buffer);
 
     } catch (error) {
